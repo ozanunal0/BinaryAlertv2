@@ -19,14 +19,12 @@ class BinaryAlertStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # 1. SNS Topic (Alarm Sistemi) 🔔
-        # Malware bulunduğunda buraya bildirim düşecek
+        # 1. SNS Topic
         alert_topic = sns.Topic(self, "YaraMatchTopic",
             display_name="BinaryAlert - Malware Found"
         )
         
-        # İstersen buraya kendi mail adresini yazarak test edebilirsin (Opsiyonel)
-        alert_topic.add_subscription(subs.EmailSubscription("ozanunal@protonmail.com"))
+        alert_topic.add_subscription(subs.EmailSubscription(""))
 
         # 2. DynamoDB Table
         table = dynamodb.Table(
@@ -68,9 +66,8 @@ class BinaryAlertStack(Stack):
             timeout=Duration.seconds(60),
             environment={
                 "YARA_MATCHES_DYNAMO_TABLE_NAME": table.table_name,
-                "YARA_ALERTS_SNS_TOPIC_ARN": alert_topic.topic_arn, # <-- Artık boş değil!
+                "YARA_ALERTS_SNS_TOPIC_ARN": alert_topic.topic_arn,
                 "NO_MATCHES_SNS_TOPIC_ARN": "",
-                # Yextend'in kütüphaneleri bulması için yol tarifi:
                 "LD_LIBRARY_PATH": "/usr/lib64:$LD_LIBRARY_PATH"
             },
         )
@@ -78,14 +75,11 @@ class BinaryAlertStack(Stack):
         from aws_cdk import aws_lambda_event_sources
         analyzer_function.add_event_source(aws_lambda_event_sources.SqsEventSource(queue))
 
-        # 6. İzinler (IAM Permissions)
         bucket.grant_read(analyzer_function)
         table.grant_read_write_data(analyzer_function)
         
-        # SNS Yayınlama İzni (Çok Önemli)
         alert_topic.grant_publish(analyzer_function)
         
-        # CloudWatch Metrik İzni
         analyzer_function.add_to_role_policy(iam.PolicyStatement(
             actions=["cloudwatch:PutMetricData"],
             resources=["*"]
