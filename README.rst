@@ -70,5 +70,5 @@ Configuration
 Credits
 -------
 
-Based on the original **BinaryAlert** concept and logic by **Airbnb Security**.
+Based on the original **BinaryAlert** concept and logic by **Airbnb Security**. https://github.com/airbnb/binaryalert
 Refactored and modernized for AWS CDK and Docker.
