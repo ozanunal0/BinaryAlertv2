@@ -19,7 +19,6 @@ Architecture Overview
 * **S3 Bucket**: Binaries uploaded here trigger the analysis pipeline.
 * **SQS Queue**: Buffers analysis requests to decouple ingestion from processing.
 * **Analyzer Lambda**: A Docker-based Python 3.12 Lambda function that scans files using the YARA engine. Built for ``linux/amd64`` to support legacy binaries.
-* **Downloader Lambda**: Fetches samples directly from CrowdStrike EDR for analysis.
 * **DynamoDB**: Stores YARA match results and analysis metadata.
 * **SNS**: Publishes alerts when malware is detected.
 
