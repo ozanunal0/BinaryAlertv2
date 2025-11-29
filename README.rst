@@ -11,6 +11,11 @@ Serverless, real-time malware detection using YARA, modernized for 2025 with AWS
 Architecture Overview
 ---------------------
 
+.. image:: docs/images/architecture.png
+  :align: center
+  :scale: 75%
+  :alt: Architecture
+
 * **S3 Bucket**: Binaries uploaded here trigger the analysis pipeline.
 * **SQS Queue**: Buffers analysis requests to decouple ingestion from processing.
 * **Analyzer Lambda**: A Docker-based Python 3.12 Lambda function that scans files using the YARA engine. Built for ``linux/amd64`` to support legacy binaries.
